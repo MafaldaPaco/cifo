@@ -1,0 +1,10 @@
+Implementado:
+Removed repetition and creates a representation of the route for each vehicle
+Started to alter evolve function to change after x generations without improvement
+
+
+TODO:
+Fitness function
+Crossover
+Selection
+Mutation

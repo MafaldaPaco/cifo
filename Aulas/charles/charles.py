@@ -75,7 +75,7 @@ class Population:
                 elif self.optim == "min":
                     elite = copy(min(self.individuals, key=attrgetter('fitness')))
 
-                new_pop.append(elite)
+                #new_pop.append(elite)
 
             while len(new_pop) < self.size:
                 # selection
@@ -95,6 +95,19 @@ class Population:
                 new_pop.append(Individual(representation=offspring1))
                 if len(new_pop) < self.size:
                     new_pop.append(Individual(representation=offspring2))
+
+            if elitism:
+                if self.optim == "max":
+                    worst = min(new_pop, key=attrgetter('fitness'))
+                    if elite.fitness > worst.fitness:
+                        new_pop.pop(new_pop.index(worst))
+                        new_pop.append(elite)
+                if self.optim == "min":
+                    worst = max(new_pop, key=attrgetter('fitness'))
+                    if elite.fitness < worst.fitness:
+                        new_pop.pop(new_pop.index(worst))
+                        new_pop.append(elite)
+
 
             self.individuals = new_pop
 

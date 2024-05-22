@@ -55,7 +55,7 @@ def get_neighbours(self):
 Individual.get_fitness = get_fitness
 Individual.get_neighbours = get_neighbours
 
-pop = Population(size=1, optim="max", sol_size=4, valid_set=[0, 1])
+pop = Population(size=1, optim="max", sol_size=4, valid_set=[0, 1], repetition=1)
 #pop = Population(size=1, optim="max", sol_size=1, valid_set=[i for i in range(1, 16)])
 
 
