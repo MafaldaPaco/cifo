@@ -8,3 +8,5 @@ Fitness function
 Crossover
 Selection
 Mutation
+Mais de 1 elite no evolve?
+alterar mutation para receber percentagem

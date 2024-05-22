@@ -114,12 +114,12 @@ class Population:
                     valid_set=kwargs["valid_set"],
                 )
             )
-    def evolve(self, xo_prob, mut_prob, select, xo, mutate, start, end, elitism=True, gens=100):
+    def evolve(self, xo_prob, mut_prob, select, xo, mutate, initial, last, elitism=True):
         last_return = []
         best_fitness = None
-        last_improved_gen = start
-        
-        for i in range(gens):
+        last_improved_gen = initial
+
+        for gen in range(initial, last+1):
             new_pop = []
 
             if elitism:
@@ -131,14 +131,13 @@ class Population:
                 new_pop.append(elite)
 
             while len(new_pop) < self.size:
-                # selection
-                parent1, parent2 = select(self), select(self)
-                # xo with prob
-                if random() < xo_prob:
-                    offspring1, offspring2 = xo(parent1, parent2)
-                # replication
-                else:
+                parent1, parent2 = select(self), select(self) # selection
+                
+                if random() < xo_prob: # xo with prob
+                    offspring1, offspring2 = xo(parent1, parent2)                
+                else: # replication
                     offspring1, offspring2 = parent1, parent2
+
                 # mutation with prob
                 if random() < mut_prob:
                     offspring1 = mutate(offspring1)
@@ -152,22 +151,23 @@ class Population:
             if elitism:
                 if self.optim == "max":
                     worst = min(new_pop, key=attrgetter('fitness'))
+                    best = max(self, key=attrgetter("fitness"))
+                    current_fitness = best.fitness
                     if elite.fitness > worst.fitness:
                         new_pop.pop(new_pop.index(worst))
                         new_pop.append(elite)
                 if self.optim == "min":
                     worst = max(new_pop, key=attrgetter('fitness'))
+                    best = min(self, key=attrgetter("fitness"))
+                    current_fitness = best.fitness
                     if elite.fitness < worst.fitness:
                         new_pop.pop(new_pop.index(worst))
                         new_pop.append(elite)
 
             self.individuals = new_pop
 
-            if self.optim == "max":
-                print(f"Best individual of gen #{i + 1}: {max(self, key=attrgetter('fitness'))}")
-            elif self.optim == "min":
-                print(f"Best individual of gen #{i + 1}: {min(self, key=attrgetter('fitness'))}")
-
+            print(f"Best individual of gen #{gen + 1}: {best}, with a fitness of: {current_fitness}")
+            
 
     def __len__(self):
         return len(self.individuals)
