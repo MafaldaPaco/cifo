@@ -114,12 +114,11 @@ class Population:
                     valid_set=kwargs["valid_set"],
                 )
             )
-    def evolve(self, xo_prob, mut_prob, select, xo, mutate, initial, last, elitism=True):
-        last_return = []
+    def evolve(self, xo_prob, mut_prob, select, xo, mutate, gens=100, elitism=True, xo_factor=0.2, mut_factor=2, plateau_tolerance=5):
         best_fitness = None
-        last_improved_gen = initial
+        last_improvement = 1
 
-        for gen in range(initial, last+1):
+        for gen in range(gens):
             new_pop = []
 
             if elitism:
@@ -153,6 +152,9 @@ class Population:
                     worst = min(new_pop, key=attrgetter('fitness'))
                     best = max(self, key=attrgetter("fitness"))
                     current_fitness = best.fitness
+                    if (current_fitness > best_fitness) or best_fitness is None:
+                        best_fitness = current_fitness
+                        last_improvement = gen
                     if elite.fitness > worst.fitness:
                         new_pop.pop(new_pop.index(worst))
                         new_pop.append(elite)
@@ -160,6 +162,9 @@ class Population:
                     worst = max(new_pop, key=attrgetter('fitness'))
                     best = min(self, key=attrgetter("fitness"))
                     current_fitness = best.fitness
+                    if (current_fitness < best_fitness) or best_fitness is None:
+                        best_fitness = current_fitness
+                        last_improvement = gen
                     if elite.fitness < worst.fitness:
                         new_pop.pop(new_pop.index(worst))
                         new_pop.append(elite)
@@ -167,6 +172,21 @@ class Population:
             self.individuals = new_pop
 
             print(f"Best individual of gen #{gen + 1}: {best}, with a fitness of: {current_fitness}")
+
+            #Improvement check point
+            if best_fitness is None or (self.optim == "max" and current_fitness > best_fitness) or (self.optim == "min" and current_fitness < best_fitness):
+                best_fitness = current_fitness
+                last_improved = gen
+                
+            if gen - last_improvement >= plateau_tolerance:
+                xo_prob = xo_prob * xo_factor if xo_prob * xo_factor > 0 else 0
+                mut_prob = mut_prob * mut_factor if mut_prob * mut_factor > 0 else 0
+                last_improvement = gen + 1
+                print(f"{gen - last_improvement} generations without improvement. New values: xo_prob={xo_prob}, mut_prob={mut_prob}")
+
+        return [best_fitness, gen, last_improvement]
+
+
             
 
     def __len__(self):
