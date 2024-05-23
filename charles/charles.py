@@ -185,8 +185,6 @@ class Population:
                 print(f"{gen - last_improvement} generations without improvement. New values: xo_prob={xo_prob}, mut_prob={mut_prob}")
 
         return [best_fitness, gen, last_improvement]
-
-
             
 
     def __len__(self):
