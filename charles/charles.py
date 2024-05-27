@@ -95,18 +95,18 @@ class Population:
                     valid_set=kwargs["valid_set"],
                 )
             )
-    def evolve(self, xo_prob, mut_prob, select, xo, mutate, gens=100, elitism=True, xo_factor=0.2, mut_factor=2, plateau_tolerance=5):
+    def evolve(self, xo_prob, mut_prob, select, xo, mutate, gens=100, elitism=1, xo_factor=0.2, mut_factor=2, plateau_tolerance=5):
         best_fitness = None
         last_improvement = 1
 
         for gen in range(gens):
             new_pop = []
 
-            if elitism:
+            if elitism > 0:
                 if self.optim == "max":
-                    elite = copy(max(self.individuals, key=attrgetter('fitness')))
+                    elite = sorted(self.individuals, key=attrgetter("fitness"), reverse=True)[:elitism]
                 elif self.optim == "min":
-                    elite = copy(min(self.individuals, key=attrgetter('fitness')))
+                    elite = sorted(self.individuals, key=attrgetter("fitness"))[:elitism]
 
                 new_pop.append(elite)
 

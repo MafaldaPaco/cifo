@@ -1,4 +1,4 @@
-# TSP data from https://developers.google.com/optimization/routing/vrp#create_the_data
+# VRP data from https://developers.google.com/optimization/routing/vrp#create_the_data
 
 vrp_data = {
     'distance_matrix': [
