@@ -4,26 +4,6 @@ from copy import copy
 import numpy as np
 import sys
 
-# Import TSP data
-sys.path.insert(0, 'data')  # Adjust this if your data.py is located elsewhere
-from data import data
-
-def vrp_fitness(individual):
-    total_distance = 0
-    # Loop over each vehicle's route
-    for route in individual.representation:
-        if not route:  
-            continue
-        # Add the distance from the depot to the first location
-        total_distance += data['distance_matrix'][data['depot']][route[0]]
-        # Add the distances between consecutive locations in the route
-        for i in range(len(route) - 1):
-            total_distance += data['distance_matrix'][route[i]][route[i + 1]]
-        # Add the distance from the last location back to the depot
-        total_distance += data['distance_matrix'][route[-1]][data['depot']]
-        
-    return total_distance
-
 # TSP-specific crossover
 def crossover(parent1, parent2):
     size = len(parent1)
@@ -62,14 +42,14 @@ def select(population):
 
 class Individual:
     # we always initialize
-    def __init__(self, representation=None, size=None, valid_set=None):
+    def __init__(self, num_vehicles, representation=None, size=None, valid_set=None):
 
         #Removed repetition and creates a representation of the route for each vehicle
         if representation is None:
-            self.representation = [[] for _ in range(data['num_vehicles'])]
+            self.representation = [[] for _ in range(num_vehicles)]
             locations = sample(valid_set, size)
             for i, location in enumerate(locations):
-                self.representation[i % data['num_vehicles']].append(location)
+                self.representation[i % num_vehicles].append(location)
         else:
             self.representation = representation
 
@@ -110,6 +90,7 @@ class Population:
         for _ in range(size):
             self.individuals.append(
                 Individual(
+                    num_vehicles=kwargs["num_vehicles"],
                     size=kwargs["sol_size"],
                     valid_set=kwargs["valid_set"],
                 )
@@ -195,30 +176,3 @@ class Population:
     
     def __repr__(self):
         return f"Population(size={self.size}, individuals={self.individuals})"
-
-
-# Assign the fitness function
-Individual.get_fitness = vrp_fitness
-print("Fitness function assigned successfully.")
-
-# Check data contents
-print("Distance Matrix:")
-for row in data['distance_matrix']:
-    print(row)
-print("Number of vehicles:", data['num_vehicles'])
-print("Depot:", data['depot'])
-print(len(data['distance_matrix']))
-
-# Create a population
-try:
-    population = Population(
-        size=10,
-        optim="min",
-        sol_size=len(data['distance_matrix']) - 1,  # Exclude depot
-        valid_set=list(range(1, len(data['distance_matrix']))),  # Locations excluding the depot
-        repetition=False  # No longer needed
-    )
-    print("Population created successfully.")
-    print("Best individual: ", population[0].representation, "with fitness: ", population[0].fitness)
-except Exception as e:
-    print(f"Error creating population: {e}")

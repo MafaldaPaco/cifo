@@ -1,25 +1,12 @@
 from charles.charles import Population, Individual
 from copy import copy
-from data import data
+from data.data import vrp_data as data, locations
 
-
-def get_fitness(self):
-    """A simple objective function to calculate distances
-    for the TSP problem.
-
-    Returns:
-        int: the total distance of the path
-    """
-    fitness = 0
-    for i in range(len(self.representation)):
-        # starting from the distance bw the last city and the first
-        fitness += distance_matrix[self.representation[i-1]][self.representation[i]]
-    return fitness
 
 def get_fitness(self):
     """A simple objective function to calculate distances for the VRP problem.
     Returns:
-        int: the total distance of the routes
+        int: the total distance of the route
     """
     fitness = 0
     # Loop over each vehicle's route
@@ -57,16 +44,17 @@ def get_neighbours(self):
 Individual.get_fitness = get_fitness
 Individual.get_neighbours = get_neighbours
 
-'''P = Population(size=20, optim="min", sol_size=len(cities),
-                 valid_set=[i for i in range(len(cities))], repetition = False)
 
-P.evolve(gens=100, xo_prob=0.9, mut_prob=0.15, select=tournament_sel,#
-         xo=cycle_xo, mutate=swap_mutation, elitism=True)
+P = Population(size=20, optim="min", sol_size=len(locations)-1,
+                 valid_set=[i for i in range(1, len(locations))], num_vehicles=data['num_vehicles'])
 '''
+P.evolve(gens=100, xo_prob=0.9, mut_prob=0.15, select=tournament_sel,#
+         xo=cycle_xo, mutate=swap_mutation, elitism=True)'''
 
 #hill_climb(pop)
 #sim_annealing(pop)
 
+'''
 
 print()
 a= [[] for _ in range(data['num_vehicles'])]
@@ -75,7 +63,6 @@ fitness = 0
 for route in [[] for _ in range(data['num_vehicles'])]:
     print(data['distance_matrix'][data['depot']])
     print([route])
-    print([np.random.uniform(size=size[i]) for i in range(len(size))])
     if not route:  
         print('b')
         continue
@@ -87,3 +74,31 @@ for route in [[] for _ in range(data['num_vehicles'])]:
         fitness += data['distance_matrix'][route[i]][route[i + 1]]
     # Add the distance from the last location back to the depot
     fitness += data['distance_matrix'][route[-1]][data['depot']]
+'''
+
+
+for individual in P.individuals:
+    for route in individual.representation:
+        print(route)
+    print('-' * 20)
+
+
+test_individual = P.individuals[0]
+fitness = 0
+for route in test_individual.representation:
+    print(f"Route: {route}")
+    if not route:
+        print('b')
+        continue
+    # Add the distance from the depot to the first location
+    fitness += data['distance_matrix'][data['depot']][route[0]]
+    print(f"{data['distance_matrix'][data['depot']][route[0]]}, Depot to First Location")
+    # Add the distances between consecutive locations in the route
+    for i in range(len(route) - 1):
+        fitness += data['distance_matrix'][route[i]][route[i + 1]]
+        print(f"{data['distance_matrix'][route[i]][route[i + 1]]}, Between Locations {route[i]} and {route[i + 1]}")
+    # Add the distance from the last location back to the depot
+    fitness += data['distance_matrix'][route[-1]][data['depot']]
+    print(f"{data['distance_matrix'][route[-1]][data['depot']]}, Last Location to Depot")
+
+print(f"Total Fitness: {fitness}")

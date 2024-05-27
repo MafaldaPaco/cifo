@@ -10,3 +10,5 @@ Selection
 Mutation
 Mais de 1 elite no evolve?
 alterar mutation para receber percentagem
+Perguntar Berfin valid set e representation
+Implementar o bloqueio de rotas - se 1 carro vai a x, os outros carros não podem ir 
