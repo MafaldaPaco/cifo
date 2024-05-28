@@ -9,5 +9,6 @@ Crossover
 Selection
 Mutation
 alterar mutation para receber percentagem
-Implementar o bloqueio de rotas - se 1 carro vai a x, os outros carros não podem ir 
+Implementar o tamanho diferente de rotas
 Neighbours?
+Ver se consigo fazer do problema green
