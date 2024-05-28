@@ -1,44 +1,8 @@
 from operator import attrgetter
-from random import shuffle, choice, sample, random
+from random import sample, random
 from copy import copy
 import numpy as np
 import sys
-
-# TSP-specific crossover
-def crossover(parent1, parent2):
-    size = len(parent1)
-    cxpoint1, cxpoint2 = sorted(sample(range(size), 2))
-    offspring1 = [None] * size
-    offspring2 = [None] * size
-    offspring1[cxpoint1:cxpoint2] = parent1[cxpoint1:cxpoint2]
-    offspring2[cxpoint1:cxpoint2] = parent2[cxpoint1:cxpoint2]
-
-    fill = lambda offspring, parent: [item for item in parent if item not in offspring]
-
-    offspring1[:cxpoint1] = fill(offspring1, parent2)
-    offspring1[cxpoint2:] = fill(offspring1, parent2)
-
-    offspring2[:cxpoint1] = fill(offspring2, parent1)
-    offspring2[cxpoint2:] = fill(offspring2, parent1)
-
-    return offspring1, offspring2
-
-# TSP-specific mutation (swap mutation)
-def mutate(individual):
-    size = len(individual)
-    idx1, idx2 = sample(range(size), 2)
-    individual[idx1], individual[idx2] = individual[idx2], individual[idx1]
-    return individual
-
-# TSP-specific selection (tournament selection)
-def select(population):
-    tournament = sample(population.individuals, k=3)
-    if population.optim == "max":
-        return max(tournament, key=attrgetter('fitness'))
-    else:
-        return min(tournament, key=attrgetter('fitness'))
-
-
 
 class Individual:
     # we always initialize
