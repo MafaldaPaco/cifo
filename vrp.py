@@ -4,11 +4,12 @@ from data.data import vrp_data as data, locations
 
 
 def get_fitness(self):
-    """A simple objective function to calculate distances for the VRP problem.
+    """A simple objective function to calculate distances for the VRP problem, with a penalization for excessive use of vehicles.
     Returns:
         int: the total distance of the route
     """
     fitness = 0
+    vehicles_used = sum(1 for route in self.representation if route)
     # Loop over each vehicle's route
     for route in self.representation:
         if not route:  
@@ -20,9 +21,10 @@ def get_fitness(self):
             fitness += data['distance_matrix'][route[i]][route[i + 1]]
         # Add the distance from the last location back to the depot
         fitness += data['distance_matrix'][route[-1]][data['depot']]
-        
-    return fitness
-
+    
+    # Penalize for using more vehicles than necessary
+    penalty = vehicles_used * 100
+    return fitness + penalty
 
 def get_neighbours(self):
     """A neighbourhood function for the TSP problem. Switch

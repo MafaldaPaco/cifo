@@ -8,12 +8,15 @@ class Individual:
     # we always initialize
     def __init__(self, num_vehicles, representation=None, size=None, valid_set=None):
 
-        #Removed repetition and creates a representation of the route for each vehicle
+        #Removed repetition + created a route representation for the vehicles
         if representation is None:
             self.representation = [[] for _ in range(num_vehicles)]
             locations = sample(valid_set, size)
+            #Randomly choosing how many of the vehicles will be used
+            vehicles_used = random.randint(1, num_vehicles)
             for i, location in enumerate(locations):
-                self.representation[i % num_vehicles].append(location)
+                #Assigning routes to the vehicles used
+                self.representation[i % vehicles_used].append(location)
         else:
             self.representation = representation
 
@@ -60,19 +63,19 @@ class Population:
                 )
             )
     def evolve(self, xo_prob, mut_prob, select, xo, mutate, gens=100, elitism=1, xo_factor=0.2, mut_factor=2, plateau_tolerance=5):
-        best_fitness = None
+        best_fitness = 0
         last_improvement = 1
 
         for gen in range(gens):
             new_pop = []
-
+            
+            #Multiple elites implementation
             if elitism > 0:
                 if self.optim == "max":
                     elite = sorted(self.individuals, key=attrgetter("fitness"), reverse=True)[:elitism]
                 elif self.optim == "min":
                     elite = sorted(self.individuals, key=attrgetter("fitness"))[:elitism]
-
-                new_pop.append(elite)
+                new_pop.extend(elite)
 
             while len(new_pop) < self.size:
                 parent1, parent2 = select(self), select(self) # selection
@@ -91,30 +94,32 @@ class Population:
                 new_pop.append(Individual(representation=offspring1))
                 if len(new_pop) < self.size:
                     new_pop.append(Individual(representation=offspring2))
-            
-            if elitism:
-                if self.optim == "max":
-                    worst = min(new_pop, key=attrgetter('fitness'))
-                    best = max(self, key=attrgetter("fitness"))
-                    current_fitness = best.fitness
-                    if (current_fitness > best_fitness) or best_fitness is None:
-                        best_fitness = current_fitness
-                        last_improvement = gen
-                    if elite.fitness > worst.fitness:
-                        new_pop.pop(new_pop.index(worst))
-                        new_pop.append(elite)
-                if self.optim == "min":
-                    worst = max(new_pop, key=attrgetter('fitness'))
-                    best = min(self, key=attrgetter("fitness"))
-                    current_fitness = best.fitness
-                    if (current_fitness < best_fitness) or best_fitness is None:
-                        best_fitness = current_fitness
-                        last_improvement = gen
-                    if elite.fitness < worst.fitness:
-                        new_pop.pop(new_pop.index(worst))
-                        new_pop.append(elite)
 
             self.individuals = new_pop
+            
+            #Updating the last improved generation information + storing the best and worst fitness
+            if self.optim == "max":
+                worst = min(new_pop, key=attrgetter('fitness'))
+                best = max(self, key=attrgetter("fitness"))
+                current_fitness = best.fitness
+                if (current_fitness > best_fitness) or best_fitness == 0:
+                    best_fitness = current_fitness
+                    last_improvement = gen        
+            if self.optim == "min":
+                worst = max(new_pop, key=attrgetter('fitness'))
+                best = min(self, key=attrgetter("fitness"))
+                current_fitness = best.fitness
+                if (current_fitness < best_fitness) or best_fitness is None:
+                    best_fitness = current_fitness
+                    last_improvement = gen
+                
+            #Removing the individual with the worst fitness if it's fitness is worse than the last elite individual
+            if elitism:
+                if self.optim == "max" and elite[-1].fitness > worst.fitness:
+                    new_pop.pop(new_pop.index(worst))
+                if self.optim == "min"and elite[-1].fitness < worst.fitness:
+                    new_pop.pop(new_pop.index(worst))
+
 
             print(f"Best individual of gen #{gen + 1}: {best}, with a fitness of: {current_fitness}")
 
