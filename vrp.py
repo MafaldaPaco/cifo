@@ -22,8 +22,11 @@ def get_fitness(self):
         # Add the distance from the last location back to the depot
         fitness += data['distance_matrix'][route[-1]][data['depot']]
     
-    # Penalize for using more vehicles than necessary
-    penalty = vehicles_used * 100
+    # Penalizing for use of more vehicles than necessary
+    penalty = 0
+    if vehicles_used > 1:
+        penalty = (vehicles_used-1) * 100
+    
     return fitness + penalty
 
 def get_neighbours(self):
