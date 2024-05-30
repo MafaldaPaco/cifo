@@ -81,14 +81,16 @@ for route in [[] for _ in range(data['num_vehicles'])]:
     fitness += data['distance_matrix'][route[-1]][data['depot']]
 '''
 
-
-for individual in P.individuals:
+print(sorted([ind.fitness for ind in P.individuals]))
+print(sum(range(1, P.size + 1)))
+print(P.size)
+'''for individual in P.individuals:
     num_vehicles_used = sum(1 for route in individual.representation if route)
     print(f"Number of vehicles used: {num_vehicles_used}")
     print(f"Fitness: {individual.fitness}")
     for route in individual.representation:
         print(route)
     print('-' * 20)
-
+'''
 
 

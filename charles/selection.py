@@ -42,7 +42,7 @@ def tournament_sel(population, tour_size=3):
         return min(tournament, key=attrgetter('fitness'))
 
 
-def sigma_scaling(population):
+def sigma_scaling_selection(population):
     """Sigma sclaing selection implementation. Reference: Mitchell, M. (1996). An introduction to genetic algorithms. https://doi.org/10.7551/mitpress/3927.001.0001 
 
     Args:
@@ -70,5 +70,28 @@ def sigma_scaling(population):
     # Select individual based on cumulative probability - it iterates through the population to find the individual whose cumulative probability exceeds the random value r
     for individual, scaled_fitness in zip(population.individuals, scaled_fitnesses):
         position += scaled_fitness
+        if position > r:
+            return individual
+        
+
+def rank_selection(population):
+    """Rank selection implementation. 
+
+    Args:
+        population (Population): The population we want to select from.
+
+    Returns:
+        Individual: selected individual.
+    """
+    ranked_fitnesses = sorted([ind.fitness for ind in population.individuals])
+    n = population.size
+    #Using an arithmetic series to calculate the total rank
+    ranks = n * (n+1) / 2
+    
+    r = np.random.uniform(0, ranks)
+    position = 0
+    # Select individual based on cumulative probability - it iterates through the population to find the individual whose cumulative probability exceeds the random value r
+    for individual, rank in zip(population.individuals, ranked_fitnesses):
+        position += rank
         if position > r:
             return individual
