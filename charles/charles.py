@@ -91,9 +91,9 @@ class Population:
                 if random() < mut_prob:
                     offspring2 = mutate(offspring2)
 
-                new_pop.append(Individual(representation=offspring1))
+                new_pop.append(Individual(representation=offspring1, num_vehicles=sum(1 for route in offspring1 if route)))
                 if len(new_pop) < self.size:
-                    new_pop.append(Individual(representation=offspring2))
+                    new_pop.append(Individual(representation=offspring2, num_vehicles=sum(1 for route in offspring1 if route)))
 
             self.individuals = new_pop
             
