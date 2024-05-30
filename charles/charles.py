@@ -1,5 +1,5 @@
 from operator import attrgetter
-from random import sample, random
+from random import sample, random, randint
 from copy import copy
 import numpy as np
 import sys
@@ -13,7 +13,7 @@ class Individual:
             self.representation = [[] for _ in range(num_vehicles)]
             locations = sample(valid_set, size)
             #Randomly choosing how many of the vehicles will be used
-            vehicles_used = random.randint(1, num_vehicles)
+            vehicles_used = randint(1, num_vehicles)
             for i, location in enumerate(locations):
                 #Assigning routes to the vehicles used
                 self.representation[i % vehicles_used].append(location)

@@ -83,27 +83,12 @@ for route in [[] for _ in range(data['num_vehicles'])]:
 
 
 for individual in P.individuals:
+    num_vehicles_used = sum(1 for route in individual.representation if route)
+    print(f"Number of vehicles used: {num_vehicles_used}")
+    print(f"Fitness: {individual.fitness}")
     for route in individual.representation:
         print(route)
     print('-' * 20)
 
 
-test_individual = P.individuals[0]
-fitness = 0
-for route in test_individual.representation:
-    print(f"Route: {route}")
-    if not route:
-        print('b')
-        continue
-    # Add the distance from the depot to the first location
-    fitness += data['distance_matrix'][data['depot']][route[0]]
-    print(f"{data['distance_matrix'][data['depot']][route[0]]}, Depot to First Location")
-    # Add the distances between consecutive locations in the route
-    for i in range(len(route) - 1):
-        fitness += data['distance_matrix'][route[i]][route[i + 1]]
-        print(f"{data['distance_matrix'][route[i]][route[i + 1]]}, Between Locations {route[i]} and {route[i + 1]}")
-    # Add the distance from the last location back to the depot
-    fitness += data['distance_matrix'][route[-1]][data['depot']]
-    print(f"{data['distance_matrix'][route[-1]][data['depot']]}, Last Location to Depot")
 
-print(f"Total Fitness: {fitness}")
