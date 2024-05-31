@@ -1,5 +1,5 @@
 from operator import attrgetter
-from random import sample, random, randint
+from random import sample, random, randint, choice
 from copy import copy
 import numpy as np
 import sys
@@ -14,9 +14,12 @@ class Individual:
             locations = sample(valid_set, size)
             #Randomly choosing how many of the vehicles will be used
             vehicles_used = randint(1, num_vehicles)
-            for i, location in enumerate(locations):
-                #Assigning routes to the vehicles used
-                self.representation[i % vehicles_used].append(location)
+            # List of vehicles to use
+            vehicles = list(range(vehicles_used))
+            for location in locations:
+                # Randomly assign each location to one of the vehicles used
+                vehicle = choice(vehicles)
+                self.representation[vehicle].append(location)
         else:
             self.representation = representation
 
@@ -31,7 +34,10 @@ class Individual:
         raise Exception("You need to monkey patch the neighbourhood function.")
 
     def index(self, value):
-        return self.representation.index(value)
+        for i, sublist in enumerate(self.representation):
+            if sublist == value:
+                return i
+        raise ValueError(f"{value} is not in list")
 
     def __len__(self):
         return len(self.representation)
@@ -91,9 +97,9 @@ class Population:
                 if random() < mut_prob:
                     offspring2 = mutate(offspring2)
 
-                new_pop.append(Individual(representation=offspring1, num_vehicles=sum(1 for route in offspring1 if route)))
+                new_pop.append(Individual(representation=offspring1, num_vehicles=sum(1 for route in offspring1.representation if route)))
                 if len(new_pop) < self.size:
-                    new_pop.append(Individual(representation=offspring2, num_vehicles=sum(1 for route in offspring1 if route)))
+                    new_pop.append(Individual(representation=offspring2, num_vehicles=sum(1 for route in offspring2.representation if route)))
 
             self.individuals = new_pop
             

@@ -1,7 +1,7 @@
 from charles.charles import Population, Individual
 from charles.selection import fps, tournament_sel, sigma_scaling_selection, rank_selection
 from charles.mutation import swap_mutation, inversion_mutation
-from charles.crossover import cycle_xo, pmx
+from charles.crossover import cycle_xo, pmx, position_based_crossover
 from copy import copy
 from data.data import vrp_data as data, locations
 import numpy as np
@@ -58,8 +58,8 @@ Individual.get_neighbours = get_neighbours
 P = Population(size=20, optim="min", sol_size=len(locations)-1,
                  valid_set=[i for i in range(1, len(locations))], num_vehicles=data['num_vehicles'])
 
-P.evolve(gens=100, xo_prob=0.9, mut_prob=0.15, select=rank_selection,#
-         xo=cycle_xo, mutate=swap_mutation, elitism=True)
+'''P.evolve(gens=100, xo_prob=0.9, mut_prob=0.15, select=rank_selection,#
+         xo=cycle_xo, mutate=swap_mutation, elitism=True)'''
 
 #hill_climb(pop)
 #sim_annealing(pop)
@@ -85,99 +85,12 @@ for route in [[] for _ in range(data['num_vehicles'])]:
     # Add the distance from the last location back to the depot
     fitness += data['distance_matrix'][route[-1]][data['depot']]
 '''
-
-'''print(sorted([ind.fitness for ind in P.individuals]))
-print(sum(range(1, P.size + 1)))
-print(P.size)
-for individual in P.individuals:
+p1, p2 = sigma_scaling_selection(P), sigma_scaling_selection(P)
+print(p1.representation)
+print(position_based_crossover(p1, p2))
+'''for individual in P.individuals:
     print("a")
-    print(individual[0].__len__())
-    num_vehicles_used = sum(1 for route in individual.representation if route)
-    print(f"Number of vehicles used: {num_vehicles_used}")
     print(f"Fitness: {individual.fitness}")
     for route in individual.representation:
         print(route)
     print('-' * 20)'''
-
-
-def visualizeGen(population):
-    """visualizeGen creates a visualzation for the frequency of vehicle usage in each generation
-
-    Args:
-        population (Population): The population we want to select from.
-
-    Returns:
-        Visualization of the frequency of vehicle usage in each generation
-    """
-    vehicle_usage = [len(individual) for individual in population]
-    generation = np.arange(len(population))
-    
-    plt.plot(generation, vehicle_usage, 'b-')
-    plt.xlabel('Generation')
-    plt.ylabel('Number of Vehicles Used')
-    plt.title('Vehicle Usage per Generation')
-    plt.show()
-
-def visualizeRun(population):
-    """visualizeRun creates a isualization of the average and maximum fitness across generations.
-
-    Args:
-        population (Population): The population we want to select from.
-
-    Returns:
-        Visualization of the average and maximum fitness across generations.
-    """  
-    avg_fitness_history = [np.mean([individual.fitness for individual in population])]
-    max_fitness_history = [max([individual.fitness for individual in population])]
-    
-    for individual in population:
-        if individual.fitness > max_fitness_history[-1]:
-            max_fitness_history.append(individual.fitness)
-    
-    generation = np.arange(len(avg_fitness_history))
-    
-    plt.plot(generation, avg_fitness_history, 'k-', label='Average Fitness')
-    plt.plot(generation, max_fitness_history, 'c-', label='Max Fitness')
-    plt.xlabel('Generation')
-    plt.ylabel('Fitness')
-    plt.title('Fitness History of the Population')
-    plt.legend()
-    plt.show()
-
-def visualizeEvolution(population):
-    """Visualize the evolution of the population.
-
-    Args:
-        population (Population): The population we want to visualize.
-
-    Returns:
-        None
-    """
-    best_fitness_history = [max([individual.fitness for individual in population])]
-    plateau_counter = 0
-    
-    for i in range(len(population)):
-        best_fitness = max([individual.fitness for individual in population])
-        best_fitness_history.append(best_fitness)
-        
-        if best_fitness_history[-1] <= best_fitness_history[-2]:
-            plateau_counter += 1
-        else:
-            plateau_counter = 0
-        
-        if plateau_counter >= 5:
-            print(f"Plateau reached at generation {i}, best fitness: {best_fitness}")
-            break
-    
-    generation = np.arange(len(best_fitness_history))
-    
-    plt.plot(generation, best_fitness_history, 'g-')
-    plt.xlabel('Generation')
-    plt.ylabel('Best Fitness')
-    plt.title('Evolution of the Population')
-    plt.show()
-
-
-visualizeGen(P)
-visualizeRun(P)
-visualizeEvolution(P)

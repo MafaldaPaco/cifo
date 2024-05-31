@@ -3,12 +3,12 @@ Removed repetition and creates a representation of the route for each vehicle
 Started to alter evolve function to change after x generations without improvement
 Mais de 1 elite no evolve
 Fitness function
+Selection
+Ver se consigo fazer do problema green
 
 TODO:
 Crossover
-Selection
 Mutation
 alterar mutation para receber percentagem
 Implementar o tamanho diferente de rotas
 Neighbours?
-Ver se consigo fazer do problema green

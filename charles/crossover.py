@@ -1,5 +1,6 @@
 from random import randint, sample, uniform
 import numpy as np
+from charles.charles import Population, Individual
 
 def single_point_xo(parent1, parent2):
     """Implementation of single point crossover.
@@ -17,7 +18,7 @@ def single_point_xo(parent1, parent2):
     return offspring1, offspring2
 
 
-def cycle_xo(p1, p2):
+'''def cycle_xo(p1, p2):
     """Implementation of cycle crossover.
 
     Args:
@@ -28,9 +29,10 @@ def cycle_xo(p1, p2):
         Individuals: Two offspring, resulting from the crossover.
     """
     # offspring placeholders
-    offspring1 = [None] * len(p1)
-    offspring2 = [None] * len(p1)
+    sublist_lengths = [len(sublist) for sublist in p1.representation]
 
+    offspring1 = [[None] * length for length in sublist_lengths]
+    offspring2 = [[None] * length for length in sublist_lengths]
     while None in offspring1:
         index = offspring1.index(None)
         val1 = p1[index]
@@ -107,29 +109,30 @@ def geo_xo(p1,p2):
     for i in range(len(p1)):
         r = uniform(0,1)
         o[i] = p1[i] * r + (1-r) * p2[i]
-    return o
+    return o'''
 
 
 # Crossover functions
-def order_crossover(parent1, parent2):
-    size = len(parent1)
+def order_crossover(p1, p2):
+    size = len(p1)
     cx1, cx2 = np.sort(np.random.choice(size + 1, 2, replace=False))
 
-    missing1 = parent2[~np.isin(parent2, parent1[cx1:cx2])]
-    missing2 = parent1[~np.isin(parent1, parent2[cx1:cx2])]
+    missing1 = [gene for gene in p2 if gene not in p1[cx1:cx2]]
+    missing2 = [gene for gene in p1 if gene not in p2[cx1:cx2]]
 
-    offspring1, offspring2 = np.empty(size, dtype=int), np.empty(size, dtype=int)
+    offspring1, offspring2 = [[] for _ in range(size)], [[] for _ in range(size)]
 
     offspring1[:cx1] = missing1[:cx1]
     offspring2[:cx1] = missing2[:cx1]
-    offspring1[cx1:cx2] = parent1[cx1:cx2]
-    offspring2[cx1:cx2] = parent2[cx1:cx2]
+    offspring1[cx1:cx2] = p1[cx1:cx2]
+    offspring2[cx1:cx2] = p2[cx1:cx2]
     offspring1[cx2:] = missing1[cx1:]
     offspring2[cx2:] = missing2[cx1:]
 
     return offspring1, offspring2
 
-def order_based_crossover(parent1, parent2):
+
+'''def order_based_crossover(parent1, parent2):
     size = len(parent1)
     selected = np.random.choice([True, False], size)
 
@@ -143,22 +146,33 @@ def order_based_crossover(parent1, parent2):
     offspring1[~matching1] = parent2[~matching1]
     offspring2[~matching2] = parent1[~matching2]
 
-    return offspring1, offspring2
+    return offspring1, offspring2'''
 
-def position_based_crossover(parent1, parent2):
-    size = len(parent1)
+def position_based_crossover(p1, p2):
+    size = len(p1)
     selected = np.random.choice([True, False], size)
 
-    offspring1, offspring2 = np.empty(size, dtype=int), np.empty(size, dtype=int)
+    sublist_lengths = [len(sublist) for sublist in p1.representation]
 
-    offspring1[selected] = parent1[selected]
-    offspring2[selected] = parent2[selected]
-    offspring1[~selected] = parent2[~np.isin(parent2, parent1[selected])]
-    offspring2[~selected] = parent1[~np.isin(parent1, parent2[selected])]
+    offspring1, offspring2 = [[] *length for length in sublist_lengths], [[None] *length  for length in sublist_lengths]
+
+    # Select elements based on 'selected'
+    selected_indices = np.where(selected)[0]
+    unselected_indices = np.where(~selected)[0]
+    for e in selected_indices:
+        offspring1[e] = p1[e]
+        offspring2[e] = p2[e]
+
+    # Reverse the selection process
+    for index in unselected_indices:
+        if p2[index] not in offspring1:
+            offspring1[index] = p2[index]
+        if p1[index] not in offspring2:
+            offspring2[index] = p1[index]
 
     return offspring1, offspring2
 
-def cycle_crossover(parent1, parent2):
+'''def cycle_crossover(parent1, parent2):
     size = len(parent1)
     offspring1, offspring2 = np.empty(size, dtype=int), np.empty(size, dtype=int)
     visited = np.zeros(size, dtype=bool)
@@ -225,7 +239,7 @@ def edge_recombination_crossover(parent1, parent2):
 
         return offspring
 
-    return one_offspring(parent1), one_offspring(parent2)
+    return one_offspring(parent1), one_offspring(parent2)'''
 
 def geometric_xo(p1, p2):
     size = len(p1)
