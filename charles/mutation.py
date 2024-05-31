@@ -24,7 +24,7 @@ def binary_mutation(individual):
     return individual
 
 
-def swap_mutation(individual):
+'''def swap_mutation(individual):
     """Swap mutation for a GA individual. Swaps the bits.
 
     Args:
@@ -50,15 +50,17 @@ def inversion_mutation(individual):
     mut_indexes = sample(range(0, len(individual)), 2)
     mut_indexes.sort()
     individual[mut_indexes[0]:mut_indexes[1]] = individual[mut_indexes[0]:mut_indexes[1]][::-1]
-    return individual
+    return individual'''
 
 # Mutation functions
 def shuffle_mutation(individual):
     size = len(individual)
     indices = np.random.choice([True, False], size)
-    subset = individual[indices]
+    indices = np.where(indices)[0]
+    subset = [individual[i] for i in indices]
     np.random.shuffle(subset)
-    individual[indices] = subset
+    for i, e in enumerate(indices):
+        individual[e] = subset[i]
 
 def add_subtract_mutation(individual):
     idx1 = np.random.choice(np.nonzero(individual)[0])
@@ -78,12 +80,6 @@ def inversion_mutation(individual, mutation_rate=0.1):
     if np.random.rand() < mutation_rate:
         idx1, idx2 = np.sort(np.random.choice(len(individual), 2, replace=False))
         individual[idx1:idx2+1] = individual[idx1:idx2+1][::-1]
-
-def inversion_mutation(individual, mutation_rate=0.1):
-    if np.random.rand() < mutation_rate:
-        idx1, idx2 = np.sort(np.random.choice(len(individual), 2, replace=False))
-        individual[idx1:idx2+1] = individual[idx1:idx2+1][::-1]
-
 
 
 if __name__ == "__main__":
