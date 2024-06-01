@@ -1,7 +1,7 @@
 from charles.charles import Population, Individual
 from charles.selection import fps, tournament_sel, sigma_scaling_selection, rank_selection
-from charles.mutation import swap_mutation, inversion_mutation
-from charles.crossover import cycle_xo, pmx, position_based_crossover
+from charles.mutation import swap_mutation, inversion_mutation, binary_mutation, shuffle_mutation
+from charles.crossover import order_crossover, single_point_xo, position_based_crossover, geometric_xo
 from copy import copy
 from data.data import vrp_data as data, locations
 import numpy as np
@@ -58,39 +58,8 @@ Individual.get_neighbours = get_neighbours
 P = Population(size=20, optim="min", sol_size=len(locations)-1,
                  valid_set=[i for i in range(1, len(locations))], num_vehicles=data['num_vehicles'])
 
-'''P.evolve(gens=100, xo_prob=0.9, mut_prob=0.15, select=rank_selection,#
-         xo=cycle_xo, mutate=swap_mutation, elitism=True)'''
+for ind in P.individuals:
+    print(ind)
 
-#hill_climb(pop)
-#sim_annealing(pop)
-
-'''
-
-print()
-a= [[] for _ in range(data['num_vehicles'])]
-fitness = 0
-# Loop over each vehicle's route
-for route in [[] for _ in range(data['num_vehicles'])]:
-    print(data['distance_matrix'][data['depot']])
-    print([route])
-    if not route:  
-        print('b')
-        continue
-    # Add the distance from the depot to the first location
-    fitness += data['distance_matrix'][data['depot']][route[0]]
-    print(f"{data['distance_matrix'][data['depot']][route[0]]}, ahahah")
-    # Add the distances between consecutive locations in the route
-    for i in range(len(route) - 1):
-        fitness += data['distance_matrix'][route[i]][route[i + 1]]
-    # Add the distance from the last location back to the depot
-    fitness += data['distance_matrix'][route[-1]][data['depot']]
-'''
-p1, p2 = sigma_scaling_selection(P), sigma_scaling_selection(P)
-print(p1.representation)
-print(position_based_crossover(p1, p2))
-'''for individual in P.individuals:
-    print("a")
-    print(f"Fitness: {individual.fitness}")
-    for route in individual.representation:
-        print(route)
-    print('-' * 20)'''
+P.evolve(gens=100, xo_prob=0.9, mut_prob=0.15, select=rank_selection,
+         xo=position_based_crossover, mutate=swap_mutation, elitism=1)

@@ -61,6 +61,7 @@ def shuffle_mutation(individual):
     np.random.shuffle(subset)
     for i, e in enumerate(indices):
         individual[e] = subset[i]
+    return individual
 
 def add_subtract_mutation(individual):
     idx1 = np.random.choice(np.nonzero(individual)[0])
@@ -70,16 +71,19 @@ def add_subtract_mutation(individual):
 
     individual[idx1] -= 1
     individual[idx2] += 1
+    return individual
 
 def swap_mutation(individual, mutation_rate=0.1):
     if np.random.rand() < mutation_rate:
         idx1, idx2 = np.random.choice(len(individual), 2, replace=False)
         individual[idx1], individual[idx2] = individual[idx2], individual[idx1]
+    return individual
 
 def inversion_mutation(individual, mutation_rate=0.1):
     if np.random.rand() < mutation_rate:
         idx1, idx2 = np.sort(np.random.choice(len(individual), 2, replace=False))
         individual[idx1:idx2+1] = individual[idx1:idx2+1][::-1]
+    return individual
 
 
 if __name__ == "__main__":

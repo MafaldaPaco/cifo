@@ -87,19 +87,21 @@ class Population:
                 parent1, parent2 = select(self), select(self) # selection
                 
                 if random() < xo_prob: # xo with prob
-                    offspring1, offspring2 = xo(parent1, parent2)                
+                    offspring1, offspring2 = xo(parent1, parent2) 
+                       
                 else: # replication
                     offspring1, offspring2 = parent1, parent2
-
+                    
                 # mutation with prob
                 if random() < mut_prob:
                     offspring1 = mutate(offspring1)
+                                        
                 if random() < mut_prob:
                     offspring2 = mutate(offspring2)
-
-                new_pop.append(Individual(representation=offspring1, num_vehicles=sum(1 for route in offspring1.representation if route)))
+                    
+                new_pop.append(Individual(representation=offspring1, num_vehicles=sum(1 for route in offspring1 if route)))
                 if len(new_pop) < self.size:
-                    new_pop.append(Individual(representation=offspring2, num_vehicles=sum(1 for route in offspring2.representation if route)))
+                    new_pop.append(Individual(representation=offspring2, num_vehicles=sum(1 for route in offspring2 if route)))
 
             self.individuals = new_pop
             
