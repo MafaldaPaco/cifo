@@ -58,8 +58,5 @@ Individual.get_neighbours = get_neighbours
 P = Population(size=20, optim="min", sol_size=len(locations)-1,
                  valid_set=[i for i in range(1, len(locations))], num_vehicles=data['num_vehicles'])
 
-for ind in P.individuals:
-    print(ind)
-
 P.evolve(gens=100, xo_prob=0.9, mut_prob=0.15, select=rank_selection,
          xo=position_based_crossover, mutate=swap_mutation, elitism=1)

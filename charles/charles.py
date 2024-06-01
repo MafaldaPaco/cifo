@@ -68,10 +68,10 @@ class Population:
                     valid_set=kwargs["valid_set"],
                 )
             )
-    def evolve(self, xo_prob, mut_prob, select, xo, mutate, gens=100, elitism=1, xo_factor=0.2, mut_factor=2, plateau_tolerance=5):
+    def evolve(self, xo_prob, mut_prob, select, xo, mutate, gens=100, elitism=1, plateau_tolerance=5):
         best_fitness = 0
         last_improvement = 1
-
+        
         for gen in range(gens):
             new_pop = []
             
@@ -135,12 +135,14 @@ class Population:
             if best_fitness is None or (self.optim == "max" and current_fitness > best_fitness) or (self.optim == "min" and current_fitness < best_fitness):
                 best_fitness = current_fitness
                 last_improved = gen
-                
+            
+            xo_factor= 0.2
+            mut_factor= 2
             if gen - last_improvement >= plateau_tolerance:
                 xo_prob = xo_prob * xo_factor if xo_prob * xo_factor > 0 else 0
                 mut_prob = mut_prob * mut_factor if mut_prob * mut_factor > 0 else 0
                 last_improvement = gen + 1
-                print(f"{gen - last_improvement} generations without improvement. New values: xo_prob={xo_prob}, mut_prob={mut_prob}")
+                print(f"{gen - last_improvement} generations without improvement. New values: xo_prob={xo_prob}, mut_prob={mut_prob}. Current best fitness={best_fitness}")
 
         return [best_fitness, gen, last_improvement]
             
