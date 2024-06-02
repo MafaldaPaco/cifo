@@ -1,6 +1,8 @@
 from random import randint, sample
 import numpy as np
 
+# Binary mutation changes a single bit in the individual's representation.
+# This is useful for binary encoded individuals, where a bit flip can introduce small changes.
 def binary_mutation(individual):
     """Binary mutation for a GA individual
 
@@ -13,9 +15,9 @@ def binary_mutation(individual):
     Returns:
         Individual: Mutated Individual
     """
-    # Select a random index for mutation
+    # Randomly select a mutation index
     mut_index = randint(0, len(individual)-1)
-    # Flip the binary value at the selected index
+    # Flip the bit at the mutation index
     if individual[mut_index] == 1:
         individual[mut_index] = 0
     elif individual[mut_index] == 0:
@@ -25,8 +27,9 @@ def binary_mutation(individual):
 
     return individual
 
-
-'''def swap_mutation(individual):
+# Swap mutation exchanges the positions of two genes in the individual's representation.
+# This can introduce larger changes than binary mutation, which is useful for permutation-based representations.
+def swap_mutation(individual):
     """Swap mutation for a GA individual. Swaps the bits.
 
     Args:
@@ -35,13 +38,14 @@ def binary_mutation(individual):
     Returns:
         Individual: Mutated Individual
     """
-# Select two random indices for swapping
+    # Randomly select two positions to swap
     mut_indexes = sample(range(0, len(individual)), 2)
-# Swap the values at the selected indices
+    # Swap the selected positions
     individual[mut_indexes[0]], individual[mut_indexes[1]] = individual[mut_indexes[1]], individual[mut_indexes[0]]
     return individual
 
-
+# Inversion mutation reverses the order of a subset of genes in the individual's representation.
+# This can significantly alter the sequence, which is useful for route optimization problems.
 def inversion_mutation(individual):
     """Inversion mutation for a GA individual. Reverts a portion of the representation.
 
@@ -51,54 +55,59 @@ def inversion_mutation(individual):
     Returns:
         Individual: Mutated Individual
     """
-    # Select two random indices and sort them
+    # Randomly select two positions to define the subset
     mut_indexes = sample(range(0, len(individual)), 2)
-    # Reverse the segment of the list between the selected indices
     mut_indexes.sort()
+    # Reverse the order of the genes in the subset
     individual[mut_indexes[0]:mut_indexes[1]] = individual[mut_indexes[0]:mut_indexes[1]][::-1]
-    return individual'''
+    return individual
 
-# Mutation functions
+# Shuffle mutation randomly shuffles a subset of genes in the individual's representation.
+# This can introduce significant variation while preserving the overall gene set.
 def shuffle_mutation(individual):
     size = len(individual)
-# Create a boolean mask for selecting elements to shuffle
+    # Randomly select positions to shuffle
     indices = np.random.choice([True, False], size)
     indices = np.where(indices)[0]
-# Extract and shuffle the selected subset
     subset = [individual[i] for i in indices]
+    # Shuffle the selected positions
     np.random.shuffle(subset)
-# Place shuffled elements back into their original positions
     for i, e in enumerate(indices):
         individual[e] = subset[i]
     return individual
 
-# Select a random index with a non-zero value
+# Add/Subtract mutation decreases one gene value and increases another.
+# This maintains the total sum of the gene values, useful for certain optimization problems.
 def add_subtract_mutation(individual):
+    # Randomly select an index with a non-zero value
     idx1 = np.random.choice(np.nonzero(individual)[0])
     idx2 = idx1
-# Ensure the second index is different from the first
     while idx2 == idx1:
         idx2 = np.random.randint(len(individual))
+
+    # Subtract from one position and add to another
     individual[idx1] -= 1
     individual[idx2] += 1
     return individual
 
+# Swap mutation exchanges the positions of two genes with a certain probability.
+# This version includes a mutation rate parameter to control the likelihood of mutation.
 def swap_mutation(individual, mutation_rate=0.1):
     if np.random.rand() < mutation_rate:
         idx1, idx2 = np.random.choice(len(individual), 2, replace=False)
+        # Swap the selected positions
         individual[idx1], individual[idx2] = individual[idx2], individual[idx1]
     return individual
 
+# Inversion mutation reverses the order of a subset of genes with a certain probability.
+# This version includes a mutation rate parameter to control the likelihood of mutation.
 def inversion_mutation(individual, mutation_rate=0.1):
-# Perform mutation based on mutation rate
     if np.random.rand() < mutation_rate:
-        # Select two unique indices and sort them
         idx1, idx2 = np.sort(np.random.choice(len(individual), 2, replace=False))
-         # Reverse the segment between the selected indices
+        # Reverse the order of the genes in the subset
         individual[idx1:idx2+1] = individual[idx1:idx2+1][::-1]
     return individual
 
-# Test the inversion mutation function
 if __name__ == "__main__":
-    test = [3,1,2,4,5,6,3]
+    test = [3, 1, 2, 4, 5, 6, 3]
     inversion_mutation(test)
