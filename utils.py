@@ -59,7 +59,7 @@ def list2csv(mylist, csvfile, header):
 #Different combinations of genetic operators and parameters
 generations = [100, 200]
 pop_size = [100, 150]
-elite_size = [1, 3]
+elite_size = [0, 1, 3]
 xo_probs = [0.99, 0.9]
 mut_probs = [0.2, 0.1]
 plateau_tolerance = [20, 500]
@@ -95,4 +95,4 @@ for xo in crossover_functions:
                                         #Output results 
                                         print("Fitness: {}. {} generations, population size {}, xo probability {}, mut probability {}, elit: {}, Sel={}, XO={}, Mut={}".format( min(P, key=attrgetter("fitness")).fitness, generations, pop, p_xo, p_mut, elite, sel.__name__, xo.__name__, mut.__name__))
 
-                                        list2csv(log, "results.csv", header=["Fitness", "Best fitness", "Generation", "Last improved geneneration", "Xo prob", "Mut prob", "Selection", "Crossover", "Mutation", "Generations", "Elitism", "Tolerance"])
+                                        list2csv(log, "recent.csv", header=["Fitness", "Best fitness", "Generation", "Last improved geneneration", "Xo prob", "Mut prob", "Selection", "Crossover", "Mutation", "Generations", "Elitism", "Tolerance"])
