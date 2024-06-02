@@ -145,7 +145,7 @@ class Population:
                 
                 print(f"{gen - last_improvement} generations without improvement. New values: xo_prob={xo_prob}, mut_prob={mut_prob}. Current best fitness={best_fitness}")
 
-            evolution.append([min(self, key=attrgetter("fitness")).fitness, best_fitness, gen, last_improvement, xo_prob, mut_prob, select.__name__, xo.__name__, mutate.__name__, gens, elitism, plateau_tolerance])
+            evolution.append([min(self, key=attrgetter("fitness")).representation, min(self, key=attrgetter("fitness")).fitness, best_fitness, gen, last_improvement, xo_prob, mut_prob, select.__name__, xo.__name__, mutate.__name__, gens, elitism, plateau_tolerance])
 
         return evolution
             

@@ -95,4 +95,4 @@ for xo in crossover_functions:
                                         #Output results 
                                         print("Fitness: {}. {} generations, population size {}, xo probability {}, mut probability {}, elit: {}, Sel={}, XO={}, Mut={}".format( min(P, key=attrgetter("fitness")).fitness, generations, pop, p_xo, p_mut, elite, sel.__name__, xo.__name__, mut.__name__))
 
-                                        list2csv(log, "recent.csv", header=["Fitness", "Best fitness", "Generation", "Last improved geneneration", "Xo prob", "Mut prob", "Selection", "Crossover", "Mutation", "Generations", "Elitism", "Tolerance"])
+                                        list2csv(log, "recent.csv", header=["Representation", "Fitness", "Best fitness", "Generation", "Last improved geneneration", "Xo prob", "Mut prob", "Selection", "Crossover", "Mutation", "Generations", "Elitism", "Tolerance"])
