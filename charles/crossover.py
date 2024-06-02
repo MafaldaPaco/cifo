@@ -12,7 +12,10 @@ def single_point_xo(parent1, parent2):
     Returns:
         Individuals: Two offspring, resulting from the crossover.
     """
+    
+    # Randomly select a crossover point
     xo_point = randint(1, len(parent1)-1)
+    # Create offspring by combining parts of the parents
     offspring1 = parent1[:xo_point] + parent2[xo_point:]
     offspring2 = parent2[:xo_point] + parent1[xo_point:]
     return offspring1, offspring2
@@ -113,8 +116,11 @@ def geo_xo(p1,p2):
 
 
 # Crossover functions
+
+# Define size of the parents
 def order_crossover(p1, p2):
     size = len(p1)
+# Randomly select two crossover points
     cx1, cx2 = np.sort(np.random.choice(size + 1, 2, replace=False))
 
     missing1 = [gene for gene in p2 if gene not in p1[cx1:cx2]]
@@ -203,8 +209,10 @@ def partially_mapped_crossover(parent1, parent2):
 
     def one_offspring(p1, p2):
         offspring = np.empty(size, dtype=int)
+# Copy the segment from the first parent to the offspring
         offspring[cx1:cx2] = p1[cx1:cx2]
 
+        # Fill the remaining positions with the values from the second parent
         for i in np.concatenate([np.arange(0, cx1), np.arange(cx2, size)]):
             candidate = p2[i]
             while candidate in p1[cx1:cx2]:
@@ -215,9 +223,12 @@ def partially_mapped_crossover(parent1, parent2):
     return one_offspring(parent1, parent2), one_offspring(parent2, parent1)
 
 def edge_recombination_crossover(parent1, parent2):
+    # Define size of the parents
     size = len(parent1)
+    # Create a dictionary to store edges for each gene
     edges = {}
 
+    # Create the edge list for each gene in parent1 and parent2
     for i, v in enumerate(parent1):
         j = np.where(parent2 == v)[0][0]
         edges[v] = [parent1[(i - 1) % size], parent1[(i + 1) % size],
@@ -229,6 +240,7 @@ def edge_recombination_crossover(parent1, parent2):
         offspring[0] = parent[0]
         node = parent[0]
 
+     # Create offspring by following edges
         for index in range(1, size):
             nodes = np.array(edges[node])
             nodes = nodes[np.in1d(nodes, missing)]
@@ -242,9 +254,12 @@ def edge_recombination_crossover(parent1, parent2):
     return one_offspring(parent1), one_offspring(parent2)'''
 
 def geometric_xo(p1, p2):
+ # Define size of the parents
     size = len(p1)
+# Initialize offspring with -1
     child1, child2 = [-1]*size, [-1]*size
 
+    # Randomly assign genes from parents to offspring
     for i in range(size):
         if np.random.rand() > 0.5:
             child1[i], child2[i] = p1[i], p2[i]
@@ -254,6 +269,8 @@ def geometric_xo(p1, p2):
     return child1, child2
 
 if __name__ == "__main__":
+# Test parents
+# Example parent lists for testing
     #p1, p2 = [9,8,2,1,7,4,5,10,6,3], [1,2,3,4,5,6,7,8,9,10]
     #p1, p2 = [2,7,4,3,1,5,6,9,8], [1,2,3,4,5,6,7,8,9]
     p1, p2 = [9,8,4,5,6,7,1,3,2,10], [8,7,1,2,3,10,9,5,4,6]
