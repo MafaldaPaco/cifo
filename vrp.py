@@ -15,22 +15,30 @@ def get_fitness(self):
     """
     fitness = 0
     vehicles_used = sum(1 for route in self.representation if route)
-    # Loop over each vehicle's route
+    visited_locations = set()
+
+    # Looping over each vehicle's route
     for route in self.representation:
         if not route:  
             continue
-        # Add the distance from the depot to the first location
+        # Adding the distance from the depot to the first location
         fitness += data['distance_matrix'][data['depot']][route[0]]
-        # Add the distances between consecutive locations in the route
+        # Adding the distances between consecutive locations in the route
         for i in range(len(route) - 1):
             fitness += data['distance_matrix'][route[i]][route[i + 1]]
-        # Add the distance from the last location back to the depot
+        # Adding the distance from the last location back to the depot
         fitness += data['distance_matrix'][route[-1]][data['depot']]
+        # Updating visited locations
+        visited_locations.update(route)
     
     # Penalizing for use of more vehicles than necessary
     penalty = 0
     if vehicles_used > 1:
-        penalty = (vehicles_used-1) * 100
+        penalty = (vehicles_used-1) * 500
+    
+    # Penalizing for not visiting all locations
+    unvisited = set(range(1, len(data['distance_matrix']))) - visited_locations
+    penalty += len(unvisited) * 1000  
     
     return fitness + penalty
 
@@ -58,5 +66,6 @@ Individual.get_neighbours = get_neighbours
 P = Population(size=20, optim="min", sol_size=len(locations)-1,
                  valid_set=[i for i in range(1, len(locations))], num_vehicles=data['num_vehicles'])
 
-P.evolve(gens=100, xo_prob=0.9, mut_prob=0.15, select=rank_selection,
+res= P.evolve(gens=100, xo_prob=0.9, mut_prob=0.15, select=rank_selection,
          xo=position_based_crossover, mutate=swap_mutation, elitism=1)
+print(res)

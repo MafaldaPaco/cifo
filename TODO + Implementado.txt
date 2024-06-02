@@ -5,10 +5,11 @@ Mais de 1 elite no evolve
 Fitness function
 Selection
 Ver se consigo fazer do problema green
-
-TODO:
+Implementar o tamanho diferente de rotas
 Crossover
 Mutation
+
+
+TODO:
 alterar mutation para receber percentagem
-Implementar o tamanho diferente de rotas
 Neighbours?
